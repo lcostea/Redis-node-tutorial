@@ -1,0 +1,24 @@
+//create a user (not saving)
+//save a user details
+//create a post for the user
+//vote up / down for a post
+
+'use strict';
+
+function User() {}
+
+User.create = function (firstName, lastName, emailAddress, city, country, jobTitle, jobCompany){
+    var user = new User();
+    
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.emailAddress = emailAddress;
+    user.city = city;
+    user.country = country;
+    user.jobTitle = jobTitle;
+    user.jobCompany = jobCompany;
+    
+    return user;
+}
+
+module.exports = User;
