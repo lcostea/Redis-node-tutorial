@@ -2,25 +2,20 @@
 
 function UserRegistration() {}
 
-UserRegistration.create = function (redisClient) {
-    var userRepository = new UserRegistration();
+UserRegistration.create = function (repository) {
+    var userReg = new UserRegistration();
     
-    userRepository.redisClient = redisClient;
-    userRepository.separator = ":";
+    userReg.userRepository = repository;
     
-    return userRepository;
+    return userReg;
 }
 
 var _userRep = UserRegistration.prototype;
 
 
 
-_userRep.save = function (user, callback) {
-    var userHashKey = "Users" + this.separator + user.emailAddress;
-    this.redisClient.hmset(userHashKey, ["FirstName", user.firstName, "LastName", user.lastName, "City", user.city, "Country", user.country, "JobTitle", user.jobTitle, "JobCompany", user.jobCompany], function (err, res) {
-        //redis hmset callback
-        callback();
-    });
+_userRep.createNewUser = function (user, callback) {
+    this.userRepository.save(user, callback);
 };
 
 module.exports = UserRegistration;
