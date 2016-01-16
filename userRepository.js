@@ -9,6 +9,8 @@ UserRepository.create = function (redisClient) {
     
     userRep.redisClient = redisClient;
     userRep.separator = ":";
+    userRep.lastRegisteredUsersKey = "LastRegisteredUsers";
+    userRep.userHashKeyPrefix = "Users";
     
     return userRep;
 }
@@ -18,17 +20,19 @@ var _userRep = UserRepository.prototype;
 
 
 _userRep.save = function (user, callback) {
-    var userHashKey = "Users" + this.separator + user.emailAddress;
-    this.redisClient.hmset(userHashKey, ["FirstName", user.firstName, "LastName", user.lastName, "City", user.city, "Country", user.country, "JobTitle", user.jobTitle, "JobCompany", user.jobCompany], function (err, res) {
-        //redis hmset callback
+    var userHashKey = this.userHashKeyPrefix + this.separator + user.emailAddress;
+    var multiCommands = this.redisClient.multi();
+    multiCommands.hmset(userHashKey, ["FirstName", user.firstName, "LastName", user.lastName, "City", user.city, "Country", user.country, "JobTitle", user.jobTitle, "JobCompany", user.jobCompany], function (err, res) {
+    });
+    multiCommands.lpush(this.lastRegisteredUsersKey, user.emailAddress);
+    multiCommands.exec(function (err, replies) {
         callback();
     });
 };
 
 _userRep.getUser = function (userEmailAddress, callback) {
-    var userHashKey = "Users" + this.separator + userEmailAddress;
+    var userHashKey = this.userHashKeyPrefix + this.separator + userEmailAddress;
     this.redisClient.hgetall(userHashKey, function (err, hashUser) {
-        //(firstName, lastName, emailAddress, city, country, jobTitle, jobCompany)
         if(err){
             console.log("There was an error getting the user:");
             console.log(err);
@@ -43,6 +47,18 @@ _userRep.getUser = function (userEmailAddress, callback) {
             callback({});
         }
     });
-}
+};
+
+_userRep.getLastRegisteredUsers = function(howMany, callback) {
+    this.redisClient.lrange(this.lastRegisteredUsersKey, 0, -1, function (err, usersList) {
+        if(err){
+            console.log("There was an error getting the users list :");
+            console.log(err);
+            return null;
+        }
+        
+        callback(usersList);        
+    });
+};
 
 module.exports = UserRepository;

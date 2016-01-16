@@ -5,8 +5,7 @@ var chai = require('chai'),
 	expect = chai.expect,
     redis = require('redis'),
     User = require('../User'),
-    UserRepository = require('../userRepository'),
-    UserRegistration = require('../userRegistration');
+    UserRepository = require('../userRepository');
     
     	
 chai.should();
@@ -19,15 +18,15 @@ describe('Test the creation of a user', function() {
         var infoStub = sinon.stub(redisClient, "info");
         infoStub.callsArg(0);
         
-        var hmsetStub = sinon.stub(redisClient, "hmset");
-        hmsetStub.callsArg(2);
+        // var hmsetStub = sinon.stub(redisClient, "hmset");
+        // hmsetStub.callsArg(2);
         
         var userRepository = UserRepository.create(redisClient);
         
-        var user = User.create("Dev", "Experience", "devexperiencero@gmail.com", "Iasi", "Romania", "Software Developer", "DevExperience");     
+        var user = User.create("John", "Smith", "johnny@smith.com", "Bucharest", "Romania", "Software Tester", "Best Company");     
 
         userRepository.save(user, function() {
-            expect(hmsetStub.called).to.be.true;
+            expect(infoStub.called).to.be.true;
             done();
         });
         
