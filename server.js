@@ -19,14 +19,23 @@ app.get('/', function(req, res) {
     res.render('pages/index');
 });
 
+app.get('/posts/create', function(req, res) {
+    res.render('pages/createPost');
+});
+
 // about page 
 app.get('/posts', function(req, res) {
     res.render('pages/posts');
 });
 
+
+
+
+
 app.get('/users/create', function(req, res) {
     res.render('pages/createUser');
 });
+
 
 app.get('/users/:email', function(req, res) {
     var userCtrl = UserController.create(redisClient);

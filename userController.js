@@ -2,7 +2,6 @@
 
 var User = require('./user'),
     async = require('async'),
-    User = require('./user'),
     UserRepository = require('./userRepository');
 
 function UserController() {}

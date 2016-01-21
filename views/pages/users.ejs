@@ -22,6 +22,8 @@
                         <li>from <%= user.city %>, <%= user.country %></li>
                         <li>working at <%= user.jobCompany %> as <%= user.jobTitle %></li>
                     </ul>
+                    <p><h5><a href="/posts/<%= user.emailAddress %>">See all his posts</a></h5></p>
+                    <p><h5><a href="/posts/create/<%= user.emailAddress %>">Create New Post</a></h5></p>
                 <% } else{ %>
                     <h3>Select an user from the right to see his details!</h3>
                 <% } %>
