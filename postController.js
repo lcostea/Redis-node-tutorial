@@ -13,7 +13,15 @@ PostController.create = function (redisClient) {
     return postCtrl;
 };
 
-var _userCtrl = PostController.prototype;
+var _postCtrl = PostController.prototype;
 
+_postCtrl.createUser = function(req, res) {
+    var postRep = PostRepository.create(this.redisClient);
+    var post = Post.create(req.body.txtEmail, req.body.txtTitle, req.body.txtContent, Date.now(), 0);
+    postRep.save(post, function() {
+        res.redirect('/users/' + post.emailAddress);    
+    });
+    
+}
 
 module.exports = PostController;
