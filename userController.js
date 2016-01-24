@@ -2,6 +2,7 @@
 
 var User = require('./user'),
     async = require('async'),
+    PostRepository = require('./postRepository'),
     UserRepository = require('./userRepository');
 
 function UserController() {}
@@ -19,6 +20,8 @@ var _userCtrl = UserController.prototype;
 _userCtrl.getUsers = function(req, res) {
     var userRep = UserRepository.create(this.redisClient);
     
+    var postRep = PostRepository.create(this.redisClient);
+    
     async.parallel({
        user: function(callback) {
            
@@ -30,10 +33,15 @@ _userCtrl.getUsers = function(req, res) {
            userRep.getLastRegisteredUsers(20, function(lastRegisteredUsers){
                callback(null, lastRegisteredUsers);
            });
+       },
+       lastPostsPerUser: function(callback) {
+           postRep.getLastPostsPerUser(20, req.params.email, function(lastPostsPerUser){
+               callback(null, lastPostsPerUser);
+           });
        }
     },
     function(err, results) {
-        res.render('pages/users', results);    
+        res.render('pages/users', results);
     });
     
 };

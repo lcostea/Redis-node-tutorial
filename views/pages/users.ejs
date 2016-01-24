@@ -22,6 +22,16 @@
                         <li>from <%= user.city %>, <%= user.country %></li>
                         <li>working at <%= user.jobCompany %> as <%= user.jobTitle %></li>
                     </ul>
+                    <% if(lastPostsPerUser.length > 0){ %>
+                    <p>
+                        <h4> <%= user.emailAddress %> last posts</h4>
+                        <ul>
+                            <% lastPostsPerUser.forEach(function(postKeyTitle) { %>
+                            <li><a href="/posts/<%= postKeyTitle.key %>"><%= postKeyTitle.title %></a></li>
+                        <% }); %>
+                        </ul>
+                    </p>
+                    <% } %>
                     <p><h5><a href="/posts/<%= user.emailAddress %>">See all his posts</a></h5></p>
                     <p><h5><a href="/posts/create/<%= user.emailAddress %>">Create New Post</a></h5></p>
                 <% } else{ %>

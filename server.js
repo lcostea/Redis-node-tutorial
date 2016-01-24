@@ -4,7 +4,8 @@ var express = require('express'),
     
     
 var redis = require('redis'),
-    UserController = require('./userController');
+    UserController = require('./userController'),
+    PostController = require('./postController');
 
 var redisClient = redis.createClient();
 
@@ -19,8 +20,15 @@ app.get('/', function(req, res) {
     res.render('pages/index');
 });
 
-app.get('/posts/create', function(req, res) {
-    res.render('pages/createPost');
+app.get('/posts/create/:email', function(req, res) {
+    var model = {
+        emailAddress: req.params.email
+    };
+    res.render('pages/createPost', model);
+});
+app.post('/posts/create', function(req, res) {
+    var postCtrl = PostController.create(redisClient);
+    postCtrl.createPost(req, res);
 });
 
 // about page 
