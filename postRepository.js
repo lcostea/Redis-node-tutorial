@@ -10,7 +10,7 @@ PostRepository.create = function (redisClient) {
     postRep.redisClient = redisClient;
     postRep.postHashKeyPrefix = "Posts";
     postRep.separator = ":";
-    postRep.topPostskey = "Posts:Top";
+    postRep.topPostsKey = "Posts:Top";
     
     postRep.getPostsPerUserKey = function (emailAddress) {
         return postRep.postHashKeyPrefix + postRep.separator + emailAddress;
@@ -33,7 +33,7 @@ _postRep.save = function (post, callback) {
     multiCommands.hmset(postHashKey, ["Title", post.title, "Content", post.content, "EmailAddress", post.emailAddress, "CreationDate", post.creationDate], function (err, res) {
     });
     multiCommands.lpush(postsPerUserKey, post.title);
-    multiCommands.zadd(this.topPostskey, 0, postHashKey);
+    multiCommands.zadd(this.topPostsKey, 0, postHashKey);
     multiCommands.exec(function (err, replies) {
         callback();
     });
@@ -63,6 +63,24 @@ _postRep.getLastPostsPerUser = function(howMany, emailAddress, callback) {
         }
         
         callback(postsKeyTitleArray);    
+    });
+};
+
+// _postRep.getTopVotedPosts = function(howMany, callback) {
+//     
+// };
+
+_postRep.vote = function(scoreToAdd, post, callback) {
+    var postHashKey = this.getPostsHashKey(post.emailAddress, post.title);
+    
+    this.redisClient.zincrby(this.topPostsKey, scoreToAdd, postHashKey, function (err, newPostScore) {
+        if(err){
+            console.log("There was an voting for a post:");
+            console.log(err);
+            return null;
+        }
+        
+        return newPostScore;
     });
 };
 
