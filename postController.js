@@ -1,6 +1,7 @@
 'use strict';
 
 var Post = require('./post'),
+    async = require('async'),
     PostRepository = require('./postRepository');
 
 function PostController() {}
@@ -25,24 +26,25 @@ _postCtrl.createPost = function(req, res) {
 };
 
 
-_postCtrl.getPosts = function(req, res) {
+_postCtrl.getPost = function(req, res) {
 
     var postRep = PostRepository.create(this.redisClient);
 
     async.parallel({
+        post: function(callback) {
+
+            postRep.getPost(req.params.key, function(post){
+                callback(null, post);
+            });
+        },
        topVotedPosts: function(callback) {
-           postRep.getTopVotedPosts(20, function(lastRegisteredUsers){
-               callback(null, lastRegisteredUsers);
-           });
-       },
-       lastCreatedPosts: function(callback) {
-           postRep.getLastPostsPerUser(20, req.params.email, function(lastPostsPerUser){
-               callback(null, lastPostsPerUser);
+           postRep.getTopVotedPosts(5, function(topVotedPosts){
+               callback(null, topVotedPosts);
            });
        }
     },
     function(err, results) {
-        res.render('pages/users', results);
+        res.render('pages/posts', results);
     });
 
 };

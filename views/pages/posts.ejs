@@ -17,9 +17,12 @@
 
                 <div class="jumbotron">
                 <% if(post){ %>
-                    <h2> <%= post.title %> details</h2>
+                    <h2> <%= post.title %></h2>
                     <p>
                         <%= post.content %>
+                    </p>
+                    <p>
+                      <h6>On <%= post.creationDate %> by <a href="/users/<%= post.emailAddress %>"><%= post.emailAddress %></a> </h6>
                     </p>
 
                 <% } else{ %>
@@ -32,6 +35,11 @@
 
               <div class="well">
                 <h4>Top voted posts:</h4>
+                <ul>
+                  <% topVotedPosts.forEach(function(postTitleKeyUi) { %>
+                      <li><a href="/posts/<%= postTitleKeyUi.key %>"><%= postTitleKeyUi.title %></a></li>
+                  <% }); %>
+                </ul>
               </div>
 
                 <div class="well">

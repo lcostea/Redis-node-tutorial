@@ -38,6 +38,10 @@ app.get('/posts', function(req, res) {
   postCtrl.getPosts(req, res);
 });
 
+app.get('/posts/:key', function(req, res) {
+    var postCtrl = PostController.create(redisClient);
+    postCtrl.getPost(req, res);
+});
 
 
 //users

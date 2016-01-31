@@ -12,7 +12,7 @@
     <main>
         <div class="row">
             <div class="col-sm-8">
-            
+
                 <div class="jumbotron">
                 <% if(user.emailAddress){ %>
                     <h2> <%= user.emailAddress %> details</h2>
@@ -38,19 +38,19 @@
                         <a href="/posts/create/<%= user.emailAddress %>">Create New Post</a>
                         </h5>
                     </p>
-                    
+
                 <% } else{ %>
                     <h3>Select an user from the right to see his details!</h3>
                 <% } %>
                 </div>
-                
+
             </div>
             <div class="col-sm-4">
-                
+
                 <div class="well">
                     <h5><a href="/users/create">Create New User</a></h5>
                 </div>
-                
+
                 <div class="well">
                     <h3>Last registered users:</h3>
                     <% lastRegisteredUsers.forEach(function(userEmail) { %>
@@ -65,6 +65,6 @@
     <footer>
         <% include ../partials/footer %>
     </footer>
-    
+
 </body>
 </html>

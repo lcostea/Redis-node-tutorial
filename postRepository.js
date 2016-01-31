@@ -71,13 +71,18 @@ _postRep.getLastPostsPerUser = function(howMany, emailAddress, callback) {
 };
 
 _postRep.getTopVotedPosts = function(howMany, callback) {
-  this.redisClient.zrange(this.topPostsKey, -howMany, -1, function (err, topVotedPostsList) {
+  this.redisClient.zrange(this.topPostsKey, -howMany, -1, function (err, topVotedPostsStringList) {
       if(err){
           console.log("There was an error getting the top voted posts list :");
           console.log(err);
           return null;
       }
-
+      var topVotedPostsList = [];
+      for (var topVotedIndex = 0;topVotedIndex < topVotedPostsStringList.length;topVotedIndex++) {
+        var topVotedJsonString = topVotedPostsStringList[topVotedIndex];
+        var topVotedPostKeyTitleUi = JSON.parse(topVotedJsonString);
+        topVotedPostsList.push(topVotedPostKeyTitleUi);
+      }
       callback(topVotedPostsList);
   });
 };
@@ -93,6 +98,24 @@ _postRep.getLastCreatedPosts = function(howMany, callback) {
       callback(lastCreatedPostsList);
   });
 };
+
+_postRep.getPost = function(postHashKey, callback) {
+  this.redisClient.hgetall(postHashKey, function (err, hashPost) {
+      if(err){
+          console.log("There was an error getting the user:");
+          console.log(err);
+          return null;
+      }
+
+      if(hashPost){
+          var post = Post.create(hashPost.EmailAddress, hashPost.Title, hashPost.Content, hashPost.CreationDate, 0);
+          callback(post);
+      }
+      else{
+          callback({});
+      }
+  });
+}
 
 _postRep.vote = function(scoreToAdd, post, callback) {
     var postHashKey = this.getPostsHashKey(post.emailAddress, post.title);
