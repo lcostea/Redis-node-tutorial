@@ -6,12 +6,12 @@ function UserRepository() {}
 
 UserRepository.create = function (redisClient) {
     var userRep = new UserRepository();
-    
+
     userRep.redisClient = redisClient;
     userRep.separator = ":";
     userRep.lastRegisteredUsersKey = "LastRegisteredUsers";
     userRep.userHashKeyPrefix = "Users";
-    
+
     return userRep;
 }
 
@@ -38,7 +38,7 @@ _userRep.getUser = function (userEmailAddress, callback) {
             console.log(err);
             return null;
         }
-        
+
         if(hashUser){
             var user = User.create(hashUser.FirstName, hashUser.LastName, userEmailAddress, hashUser.City, hashUser.Country, hashUser.JobTitle, hashUser.JobCompany);
             callback(user);
@@ -56,8 +56,8 @@ _userRep.getLastRegisteredUsers = function(howMany, callback) {
             console.log(err);
             return null;
         }
-        
-        callback(usersList);        
+
+        callback(usersList);
     });
 };
 
