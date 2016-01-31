@@ -14,19 +14,29 @@
     <main>
         <div class="row">
             <div class="col-sm-8">
-            
+
                 <div class="jumbotron">
-                    <h1>This is great</h1>
-                    <p>Welcome to templating using EJS</p>
-                </div>
-                
-            </div>
-            <div class="col-sm-4">
-                
-                <div class="well">
-                    <h3>Look I'm A Sidebar!</h3>
+                <% if(post){ %>
+                    <h2> <%= post.title %> details</h2>
+                    <p>
+                        <%= post.content %>
+                    </p>
+
+                <% } else{ %>
+                    <h3>Select a post from the right to see his details!</h3>
+                <% } %>
                 </div>
 
+            </div>
+            <div class="col-sm-4">
+
+              <div class="well">
+                <h4>Top voted posts:</h4>
+              </div>
+
+                <div class="well">
+                  <h4>Last added posts:</h4>
+                </div>
             </div>
         </div>
     </main>
@@ -34,6 +44,7 @@
     <footer>
         <% include ../partials/footer %>
     </footer>
-    
+
+
 </body>
 </html>

@@ -1,8 +1,8 @@
 
 var express = require('express'),
     app = express();
-    
-    
+
+
 var redis = require('redis'),
     UserController = require('./userController'),
     PostController = require('./postController');
@@ -15,11 +15,13 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// index page 
+// start page
 app.get('/', function(req, res) {
     res.render('pages/index');
 });
 
+
+// posts
 app.get('/posts/create/:email', function(req, res) {
     var model = {
         emailAddress: req.params.email
@@ -31,15 +33,14 @@ app.post('/posts/create', function(req, res) {
     postCtrl.createPost(req, res);
 });
 
-// about page 
 app.get('/posts', function(req, res) {
-    res.render('pages/posts');
+  var postCtrl = PostController.create(redisClient);
+  postCtrl.getPosts(req, res);
 });
 
 
 
-
-
+//users
 app.get('/users/create', function(req, res) {
     res.render('pages/createUser');
 });
