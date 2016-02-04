@@ -6,21 +6,21 @@ var chai = require('chai'),
     fakeRedis = require('fakeredis'),
     User = require('../User'),
     UserRepository = require('../userRepository');
-    
-    	
+
+
 chai.should();
 
 
 describe('Test the creation of a user', function() {
    it('Save a user and load it back', function(done) {
         var fakeRedisClient = fakeRedis.createClient("Fake Redis");
-        
+
         var userRepository = UserRepository.create(fakeRedisClient);
-        
+
         var expectedUser = User.create("Dev", "Experience", "devexperiencero@gmail.com", "Iasi", "Romania", "Software Developer", "DevExperience");
-        
+
         userRepository.save(expectedUser, function(err, reply) {
-            
+
             userRepository.getUser("devexperiencero@gmail.com", function(actualUser) {
                 expect(expectedUser.emailAddress).to.equal(actualUser.emailAddress);
                 expect(expectedUser.firstName).to.equal(actualUser.firstName);
@@ -29,17 +29,17 @@ describe('Test the creation of a user', function() {
                 expect(expectedUser.country).to.equal(actualUser.country);
                 expect(expectedUser.jobTitle).to.equal(actualUser.jobTitle);
                 expect(expectedUser.jobCompany).to.equal(actualUser.jobCompany);
-                
+
                 done();
             });
         });
-        
-        
+
+
    });
-   
+
    it('Dont return anything when the user doesnt exists', function(done) {
        var fakeRedisClient = fakeRedis.createClient("Fake Redis");
-        
+
         var userRepository = UserRepository.create(fakeRedisClient);
 
         userRepository.getUser("test@test.com", function(actualUser) {
@@ -47,4 +47,24 @@ describe('Test the creation of a user', function() {
             done();
         });
    });
+
+	 it('Create 2 users and see they are returned from the LastRegisteredUsers list', function(done) {
+	 		var fakeRedisClient = fakeRedis.createClient("Fake Redis");
+
+	 		 var userRepository = UserRepository.create(fakeRedisClient);
+
+			 var firstUser = User.create("Voxxed", "Days", "first@gmail.com", "Iasi", "Romania", "Software Developer", "Voxxed");
+			 var secondUser = User.create("Voxxed", "Days", "second@gmail.com", "Iasi", "Romania", "Software Developer", "Voxxed");
+
+			 userRepository.save(firstUser, function(err, reply) {
+				 userRepository.save(secondUser, function (err, reply){
+					 userRepository.getLastRegisteredUsers(2, function(lastRegisteredUsers) {
+						 expect(lastRegisteredUsers[0]).to.equal('second@gmail.com');
+						 expect(lastRegisteredUsers[1]).to.equal('first@gmail.com');
+             done();
+           });
+				 });
+					 });
+			 });
+
 });
