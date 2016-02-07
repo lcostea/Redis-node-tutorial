@@ -1,8 +1,8 @@
 'use strict';
 
 var chai = require('chai'),
-	sinon = require('sinon'),
-	expect = chai.expect,
+	  sinon = require('sinon'),
+	  expect = chai.expect,
     fakeRedis = require('fakeredis'),
     User = require('../User'),
     UserRepository = require('../userRepository');
@@ -12,30 +12,6 @@ chai.should();
 
 
 describe('Test the creation of a user', function() {
-   it('Save a user and load it back', function(done) {
-        var fakeRedisClient = fakeRedis.createClient("Fake Redis");
-
-        var userRepository = UserRepository.create(fakeRedisClient);
-
-        var expectedUser = User.create("Dev", "Experience", "devexperiencero@gmail.com", "Iasi", "Romania", "Software Developer", "DevExperience");
-
-        userRepository.save(expectedUser, function(err, reply) {
-
-            userRepository.getUser("devexperiencero@gmail.com", function(actualUser) {
-                expect(expectedUser.emailAddress).to.equal(actualUser.emailAddress);
-                expect(expectedUser.firstName).to.equal(actualUser.firstName);
-                expect(expectedUser.lastName).to.equal(actualUser.lastName);
-                expect(expectedUser.city).to.equal(actualUser.city);
-                expect(expectedUser.country).to.equal(actualUser.country);
-                expect(expectedUser.jobTitle).to.equal(actualUser.jobTitle);
-                expect(expectedUser.jobCompany).to.equal(actualUser.jobCompany);
-
-                done();
-            });
-        });
-
-
-   });
 
    it('Dont return anything when the user doesnt exists', function(done) {
        var fakeRedisClient = fakeRedis.createClient("Fake Redis");
@@ -48,7 +24,7 @@ describe('Test the creation of a user', function() {
         });
    });
 
-	 it('Create 2 users and see they are returned from the LastRegisteredUsers list', function(done) {
+	 it('Create 2 users and see everything goes OK', function(done) {
 	 		var fakeRedisClient = fakeRedis.createClient("Fake Redis");
 
 	 		 var userRepository = UserRepository.create(fakeRedisClient);
@@ -61,10 +37,20 @@ describe('Test the creation of a user', function() {
 					 userRepository.getLastRegisteredUsers(2, function(lastRegisteredUsers) {
 						 expect(lastRegisteredUsers[0]).to.equal('second@gmail.com');
 						 expect(lastRegisteredUsers[1]).to.equal('first@gmail.com');
-             done();
+						 userRepository.getUser(firstUser.emailAddress, function(actualUser) {
+                 expect(firstUser.emailAddress).to.equal(actualUser.emailAddress);
+                 expect(firstUser.firstName).to.equal(actualUser.firstName);
+                 expect(firstUser.lastName).to.equal(actualUser.lastName);
+                 expect(firstUser.city).to.equal(actualUser.city);
+                 expect(firstUser.country).to.equal(actualUser.country);
+                 expect(firstUser.jobTitle).to.equal(actualUser.jobTitle);
+                 expect(firstUser.jobCompany).to.equal(actualUser.jobCompany);
+
+                 done();
+             });
            });
 				 });
-					 });
+				});
 			 });
 
 });

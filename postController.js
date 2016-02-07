@@ -41,6 +41,33 @@ _postCtrl.getPost = function(req, res) {
            postRep.getTopVotedPosts(5, function(topVotedPosts){
                callback(null, topVotedPosts);
            });
+       },
+       lastCreatedPosts: function(callback) {
+         postRep.getLastCreatedPosts(5, function(lastCreatedPosts){
+             callback(null, lastCreatedPosts);
+         });
+       }
+    },
+    function(err, results) {
+        res.render('pages/posts', results);
+    });
+
+};
+
+_postCtrl.getPosts = function(req, res) {
+
+    var postRep = PostRepository.create(this.redisClient);
+
+    async.parallel({
+       topVotedPosts: function(callback) {
+           postRep.getTopVotedPosts(5, function(topVotedPosts){
+               callback(null, topVotedPosts);
+           });
+       },
+       lastCreatedPosts: function(callback) {
+         postRep.getLastCreatedPosts(5, function(lastCreatedPosts){
+             callback(null, lastCreatedPosts);
+         });
        }
     },
     function(err, results) {

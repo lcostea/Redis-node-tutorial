@@ -16,17 +16,19 @@
             <div class="col-sm-8">
 
                 <div class="jumbotron">
-                <% if(post){ %>
+                <% if(typeof post !== 'undefined'){ %>
+                    <i class="fa fa-level-up fa-2x"></i>
                     <h2> <%= post.title %></h2>
+                    <i class="fa fa-level-down fa-2x"></i>
                     <p>
                         <%= post.content %>
                     </p>
                     <p>
-                      <h6>On <%= post.creationDate %> by <a href="/users/<%= post.emailAddress %>"><%= post.emailAddress %></a> </h6>
+                      <h6>On <%= post.getCreationDate() %> by <a href="/users/<%= post.emailAddress %>"><%= post.emailAddress %></a> </h6>
                     </p>
 
                 <% } else{ %>
-                    <h3>Select a post from the right to see his details!</h3>
+                    <h3>Select a post to see its details!</h3>
                 <% } %>
                 </div>
 
@@ -44,6 +46,11 @@
 
                 <div class="well">
                   <h4>Last added posts:</h4>
+                  <ul>
+                    <% lastCreatedPosts.forEach(function(postTitleKeyUi) { %>
+                        <li><a href="/posts/<%= postTitleKeyUi.key %>"><%= postTitleKeyUi.title %></a></li>
+                    <% }); %>
+                  </ul>
                 </div>
             </div>
         </div>
