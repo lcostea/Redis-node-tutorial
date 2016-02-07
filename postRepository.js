@@ -39,7 +39,7 @@ _postRep.save = function (post, callback) {
     });
     multiCommands.lpush(postsPerUserKey, post.title);
     multiCommands.lpush(this.lastCreatedPostsKey, lastCreatedPostString);
-    multiCommands.zadd(this.topPostsKey, 0, postHashKey);
+    multiCommands.zadd(this.topPostsKey, 0, lastCreatedPostString);
     multiCommands.zadd(this.allPostsKey, post.creationDate, lastCreatedPostString);
     multiCommands.exec(function (err, replies) {
         callback();
@@ -74,7 +74,7 @@ _postRep.getLastPostsPerUser = function(howMany, emailAddress, callback) {
 };
 
 _postRep.getTopVotedPosts = function(howMany, callback) {
-  this.redisClient.zrange(this.topPostsKey, -howMany, -1, function (err, topVotedPostsStringList) {
+  this.redisClient.zrange(this.topPostsKey, -howMany, -1, 'withscores', function (err, topVotedPostsStringList) {
       if(err){
           console.log("There was an error getting the top voted posts list :");
           console.log(err);
@@ -82,11 +82,38 @@ _postRep.getTopVotedPosts = function(howMany, callback) {
       }
       var topVotedPostsList = [];
       for (var topVotedIndex = 0;topVotedIndex < topVotedPostsStringList.length;topVotedIndex++) {
-        var topVotedJsonString = topVotedPostsStringList[topVotedIndex];
-        var topVotedPostKeyTitleUi = JSON.parse(topVotedJsonString);
-        topVotedPostsList.push(topVotedPostKeyTitleUi);
+        if(topVotedIndex % 2 === 1) {
+            topVotedPostsList[topVotedIndex - 1].votes = parseInt(topVotedPostsStringList[topVotedIndex]);
+        }
+        else {
+            var topVotedJsonString = topVotedPostsStringList[topVotedIndex];
+            var topVotedPostKeyTitleUi = JSON.parse(topVotedJsonString);
+            topVotedPostsList.push(topVotedPostKeyTitleUi);
+        }
       }
       callback(topVotedPostsList);
+  });
+};
+
+_postRep.getPosts = function(howMany, callback) {
+  this.redisClient.zrange(this.allPostsKey, -howMany, -1, 'withscores', function (err, postsStringList) {
+      if(err){
+          console.log("There was an error getting the posts list :");
+          console.log(err);
+          return null;
+      }
+      var postsList = [];
+      for (var postIndex = 0;postIndex < postsStringList.length;postIndex++) {
+        if(postIndex % 2 === 1) {
+            postsList[postIndex - 1].votes = postsStringList[postIndex];
+        }
+        else {
+            var postJsonString = postsStringList[postIndex];
+            var postKeyTitleUi = JSON.parse(postJsonString);
+            postsList.push(postKeyTitleUi);
+        }
+      }
+      callback(postsList);
   });
 };
 
