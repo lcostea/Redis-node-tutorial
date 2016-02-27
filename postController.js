@@ -76,4 +76,14 @@ _postCtrl.getPosts = function(req, res) {
 
 };
 
+
+_postCtrl.votePost = function(req, res) {
+    var postRep = PostRepository.create(this.redisClient);
+
+    postRep.vote(1, req.body.email, req.body.title, function(postKey) {
+        res.redirect('/posts/' + postKey);
+    });
+
+};
+
 module.exports = PostController;

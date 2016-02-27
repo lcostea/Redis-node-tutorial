@@ -17,9 +17,12 @@
 
                 <div class="jumbotron">
                 <% if(typeof post !== 'undefined'){ %>
-                    <i class="fa fa-level-up fa-2x"></i>
+                    <form action="/posts/voteUp" method="post" accept-charset="utf-8">
+                      <input type="hidden" name="title" value="<%= post.title %>" />
+                      <input type="hidden" name="email" value="<%= post.emailAddress %>" />
+                      <input class="btn-info" type="submit" name="submit" value="Vote UP" />
+                    </form>
                     <h2> <%= post.title %></h2>
-                    <i class="fa fa-level-down fa-2x"></i>
                     <p>
                         <%= post.content %>
                     </p>

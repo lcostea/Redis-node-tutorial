@@ -50,6 +50,7 @@ _postRep.getLastPostsPerUser = function(howMany, emailAddress, callback) {
     var postsPerUserKey = this.getPostsPerUserKey(emailAddress);
     var getPostsHashKey = this.getPostsHashKey;
 
+
     this.redisClient.lrange(postsPerUserKey, 0, -1, function (err, postsList) {
         if(err){
             console.log("There was an error getting the user posts list :");
@@ -80,10 +81,12 @@ _postRep.getTopVotedPosts = function(howMany, callback) {
           console.log(err);
           return null;
       }
+      //TODO: add tests for this
+      //TODO: they need to be reversed
       var topVotedPostsList = [];
       for (var topVotedIndex = 0;topVotedIndex < topVotedPostsStringList.length;topVotedIndex++) {
         if(topVotedIndex % 2 === 1) {
-            topVotedPostsList[topVotedIndex - 1].votes = parseInt(topVotedPostsStringList[topVotedIndex]);
+            topVotedPostsList[topVotedPostsList.length - 1].votes = parseInt(topVotedPostsStringList[topVotedIndex]);
         }
         else {
             var topVotedJsonString = topVotedPostsStringList[topVotedIndex];
@@ -159,17 +162,19 @@ _postRep.getPost = function(postHashKey, callback) {
 
 
 
-_postRep.vote = function(scoreToAdd, post, callback) {
-    var postHashKey = this.getPostsHashKey(post.emailAddress, post.title);
+_postRep.vote = function(scoreToAdd, emailAddress, title, callback) {
+    var postHashKey = this.getPostsHashKey(emailAddress, title);
+    var lastCreatedPost = postTransformer.ToLastCreatedPost(title, postHashKey);
+    var lastCreatedPostString = JSON.stringify(lastCreatedPost);
 
-    this.redisClient.zincrby(this.topPostsKey, scoreToAdd, postHashKey, function (err, newPostScore) {
+
+    this.redisClient.zincrby(this.topPostsKey, scoreToAdd, lastCreatedPostString, function (err) {
         if(err){
-            console.log("There was an voting for a post:");
+            console.log("There was an error voting for a post:");
             console.log(err);
-            return null;
         }
 
-        return newPostScore;
+        callback(postHashKey);
     });
 };
 

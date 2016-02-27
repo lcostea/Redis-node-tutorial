@@ -7,7 +7,7 @@ var redis = require('redis'),
     UserController = require('./userController'),
     PostController = require('./postController');
 
-var redisClient = redis.createClient();
+var redisClient = redis.createClient("6379", "192.168.0.15");
 
 app.set('view engine', 'ejs');
 
@@ -32,6 +32,12 @@ app.post('/posts/create', function(req, res) {
     var postCtrl = PostController.create(redisClient);
     postCtrl.createPost(req, res);
 });
+
+app.post('/posts/voteUp', function(req, res) {
+    var postCtrl = PostController.create(redisClient);
+    postCtrl.votePost(req, res);
+});
+
 
 app.get('/posts', function(req, res) {
   var postCtrl = PostController.create(redisClient);
