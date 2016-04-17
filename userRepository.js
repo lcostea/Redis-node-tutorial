@@ -21,11 +21,11 @@ var _userRep = UserRepository.prototype;
 
 _userRep.save = function (user, callback) {
     var userHashKey = this.userHashKeyPrefix + this.separator + user.emailAddress;
-    var multiCommands = this.redisClient.multi();
-    multiCommands.hmset(userHashKey, ["FirstName", user.firstName, "LastName", user.lastName, "City", user.city, "Country", user.country, "JobTitle", user.jobTitle, "JobCompany", user.jobCompany], function (err, res) {
+    var batchCommands = this.redisClient.batch();
+    batchCommands.hmset(userHashKey, ["FirstName", user.firstName, "LastName", user.lastName, "City", user.city, "Country", user.country, "JobTitle", user.jobTitle, "JobCompany", user.jobCompany], function (err, res) {
     });
-    multiCommands.lpush(this.lastRegisteredUsersKey, user.emailAddress);
-    multiCommands.exec(function (err, replies) {
+    batchCommands.lpush(this.lastRegisteredUsersKey, user.emailAddress);
+    batchCommands.exec(function (err, replies) {
         callback();
     });
 };

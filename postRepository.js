@@ -34,14 +34,14 @@ _postRep.save = function (post, callback) {
     var lastCreatedPost = postTransformer.ToLastCreatedPost(post.title, postHashKey);
     var lastCreatedPostString = JSON.stringify(lastCreatedPost);
 
-    var multiCommands = this.redisClient.multi();
-    multiCommands.hmset(postHashKey, ["Title", post.title, "Content", post.content, "EmailAddress", post.emailAddress, "CreationDate", post.creationDate], function (err, res) {
+    var batchCommands = this.redisClient.batch();
+    batchCommands.hmset(postHashKey, ["Title", post.title, "Content", post.content, "EmailAddress", post.emailAddress, "CreationDate", post.creationDate], function (err, res) {
     });
-    multiCommands.lpush(postsPerUserKey, post.title);
-    multiCommands.lpush(this.lastCreatedPostsKey, lastCreatedPostString);
-    multiCommands.zadd(this.topPostsKey, 0, lastCreatedPostString);
-    multiCommands.zadd(this.allPostsKey, post.creationDate, lastCreatedPostString);
-    multiCommands.exec(function (err, replies) {
+    batchCommands.lpush(postsPerUserKey, post.title);
+    batchCommands.lpush(this.lastCreatedPostsKey, lastCreatedPostString);
+    batchCommands.zadd(this.topPostsKey, 0, lastCreatedPostString);
+    batchCommands.zadd(this.allPostsKey, post.creationDate, lastCreatedPostString);
+    batchCommands.exec(function (err, replies) {
         callback();
     });
 };
@@ -81,8 +81,6 @@ _postRep.getTopVotedPosts = function(howMany, callback) {
           console.log(err);
           return null;
       }
-      //TODO: add tests for this
-      //TODO: they need to be reversed
       var topVotedPostsList = [];
       for (var topVotedIndex = 0;topVotedIndex < topVotedPostsStringList.length;topVotedIndex++) {
         if(topVotedIndex % 2 === 1) {
@@ -94,6 +92,7 @@ _postRep.getTopVotedPosts = function(howMany, callback) {
             topVotedPostsList.push(topVotedPostKeyTitleUi);
         }
       }
+      topVotedPostsList.reverse();
       callback(topVotedPostsList);
   });
 };
@@ -155,7 +154,7 @@ _postRep.getPost = function(postHashKey, callback) {
           callback(post);
       }
       else{
-          callback({});
+          callback(null);
       }
   });
 }
