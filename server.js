@@ -7,7 +7,7 @@ var redis = require('redis'),
     UserController = require('./userController'),
     PostController = require('./postController');
 
-var redisClient = redis.createClient("6379", "192.168.0.15");
+var redisClient = redis.createClient("6379", "192.168.0.105");
 
 app.set('view engine', 'ejs');
 
@@ -72,5 +72,5 @@ app.post('/users/create', function(req, res) {
 });
 
 
-app.listen(8080);
-console.log('8080 is the magic port');
+app.listen(9160);
+console.log('9160 is the magic port--');

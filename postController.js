@@ -61,6 +61,9 @@ _postCtrl.getPosts = function(req, res) {
     var postRep = PostRepository.create(this.redisClient);
 
     async.parallel({
+       post: function(callback) {
+         callback (null, null);
+       },
        topVotedPosts: function(callback) {
            postRep.getTopVotedPosts(5, function(topVotedPosts){
                callback(null, topVotedPosts);
