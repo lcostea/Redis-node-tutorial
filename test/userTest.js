@@ -1,3 +1,5 @@
+/* jshint node: true, mocha: true */
+
 'use strict';
 
 var chai = require('chai'),
@@ -13,7 +15,7 @@ chai.should();
 
 describe('Test the creation of a user', function() {
 
-   it('Dont return anything when the user doesnt exists', function(done) {
+   it('Dont returns anything when the user doesnt exists', function(done) {
        var fakeRedisClient = fakeRedis.createClient("Fake Redis");
 
         var userRepository = UserRepository.create(fakeRedisClient);

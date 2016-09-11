@@ -1,3 +1,5 @@
+/* jshint node: true */
+
 'use strict';
 
 var User = require('./user'),
@@ -63,6 +65,6 @@ _userCtrl.createUser = function(req, res) {
         res.redirect('/users');
     });
 
-}
+};
 
 module.exports = UserController;

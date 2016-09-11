@@ -1,3 +1,5 @@
+/* jshint node: true */
+
 'use strict';
 
 var User = require('./User');
@@ -13,7 +15,7 @@ UserRepository.create = function (redisClient) {
     userRep.userHashKeyPrefix = "Users";
 
     return userRep;
-}
+};
 
 var _userRep = UserRepository.prototype;
 

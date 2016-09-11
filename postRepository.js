@@ -1,3 +1,5 @@
+/* jshint node: true */
+
 'use strict';
 
 var Post = require('./post'),
@@ -24,7 +26,7 @@ PostRepository.create = function (redisClient) {
     };
 
     return postRep;
-}
+};
 
 var _postRep = PostRepository.prototype;
 
@@ -157,7 +159,7 @@ _postRep.getPost = function(postHashKey, callback) {
           callback(null);
       }
   });
-}
+};
 
 
 

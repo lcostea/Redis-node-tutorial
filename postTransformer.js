@@ -1,3 +1,5 @@
+/* jshint node: true */
+
 'use strict';
 
 var Post = require('./post');
@@ -7,6 +9,6 @@ exports.ToLastCreatedPost = function(title, key) {
     title: title,
     key: key
   };
-  
+
   return lastCreatedPost;
-}
+};
