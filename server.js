@@ -1,13 +1,13 @@
 
 var express = require('express'),
     app = express();
-
+var config = require ('./config.json');
 
 var redis = require('redis'),
     UserController = require('./userController'),
     PostController = require('./postController');
 
-var redisClient = redis.createClient("6379", "192.168.0.105");
+var redisClient = redis.createClient(config.redis.port, config.redis.server);
 
 app.set('view engine', 'ejs');
 
@@ -72,5 +72,5 @@ app.post('/users/create', function(req, res) {
 });
 
 
-app.listen(9160);
-console.log('9160 is the magic port--');
+app.listen(config.app.port);
+console.log(config.app.port + ' is the magic port--');
